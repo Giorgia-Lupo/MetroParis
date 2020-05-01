@@ -69,10 +69,14 @@ public class MetroDAO {
 
 		return linee;
 	}
-
+ 
+	// PER IL METODO 1)
 	public boolean fermateConnesse(Fermata fp, Fermata fa) {
 		String sql = "SELECT COUNT(*) AS C " + "FROM connessione " + "WHERE id_stazP=? " + "AND id_stazA=?";
 
+		//se COUNT(*) = 1 --> esiste connessione
+		//se COUNT(*) = 0 --> non esiste connessione
+		
 		try {
 			Connection conn = DBConnect.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
@@ -82,12 +86,12 @@ public class MetroDAO {
 
 			ResultSet res = st.executeQuery();
 
-			res.first();
-			int linee = res.getInt("C");
+			res.first(); // mi metto sulla prima riga
+			int linee = res.getInt("C"); // numero di linee
 
 			conn.close();
 
-			return linee >= 1;
+			return linee >= 1; //in questo caso ritorna vero
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -96,9 +100,10 @@ public class MetroDAO {
 		return false;
 	}
 
+	// PER IL METODO 2)                                 //per "conversione" da ID a Fermata
 	public List<Fermata> fermateSuccessive(Fermata fp, Map<Integer, Fermata> fermateIdMap) {
 		String sql = "SELECT DISTINCT id_stazA " + "FROM connessione " + "WHERE id_stazP=?";
-
+		//con DINSTINCT evito i duplicati --> grafo semplice
 		List<Fermata> result = new ArrayList<>();
 
 		try {
@@ -112,7 +117,7 @@ public class MetroDAO {
 
 			while (res.next()) {
 				int id_fa = res.getInt("id_stazA"); // ID fermata arrivo
-				result.add(fermateIdMap.get(id_fa));
+				result.add(fermateIdMap.get(id_fa)); //Prendo Fermata dato ID
 			}
 
 			conn.close();
@@ -125,6 +130,7 @@ public class MetroDAO {
 		return result;
 	}
 
+	// PER IL METODO 3) --> anche in questo caso ho bisogno della conversione: ID-->Fermata 
 	public List<CoppiaFermate> coppieFermate(Map<Integer, Fermata> fermateIdMap) {
 		String sql = "SELECT DISTINCT id_stazP, id_stazA FROM connessione" ;
 		
@@ -137,8 +143,8 @@ public class MetroDAO {
 			
 			while(res.next()) {
 				CoppiaFermate c = new CoppiaFermate(
-						fermateIdMap.get(res.getInt("id_stazP")),
-						fermateIdMap.get(res.getInt("id_stazA"))) ;
+						fermateIdMap.get(res.getInt("id_stazP")), 
+						fermateIdMap.get(res.getInt("id_stazA"))) ;//prendo oggetto Fermata dato ID
 				result.add(c);
 			}
 			

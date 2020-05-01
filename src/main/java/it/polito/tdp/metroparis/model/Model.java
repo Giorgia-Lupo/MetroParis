@@ -15,7 +15,7 @@ public class Model {
 	
 	private Graph<Fermata, DefaultEdge> graph ;
 	private List<Fermata> fermate ;
-	private Map<Integer, Fermata> fermateIdMap ;
+	private Map<Integer, Fermata> fermateIdMap ;//utile per metodo 2)
 	
 	public Model() {
 		this.graph = new SimpleDirectedGraph<>(DefaultEdge.class) ;
@@ -27,28 +27,34 @@ public class Model {
 		
 		this.fermateIdMap = new HashMap<>() ;
 		for(Fermata f: this.fermate) {
-			fermateIdMap.put(f.getIdFermata(), f) ;
+			fermateIdMap.put(f.getIdFermata(), f) ; //popolo la mappa
 		}
 		
+		// CREAZIONE DEI VERTICI
 		Graphs.addAllVertices(this.graph, this.fermate) ;
 		
-//		System.out.println(this.graph) ;
 		
+		//CREAZIONE DEGLI ARCHI
+				
 		// CREAZIONE DEGLI ARCHI -- metodo 1 (coppie di vertici)
+		//Grafo ha dei vertici, e tra ogni coppia l'arco c'è o no? Query per ogni coppia di query
+		//VA BENE CON GRAFO PICCOLO, complessita' pari a n^2
 		/*
 		for(Fermata fp : this.fermate) {
 			for(Fermata fa : this.fermate) {
-				if( dao.fermateConnesse(fp, fa) ) {
-					this.graph.addEdge(fp, fa) ;
+				if( dao.fermateConnesse(fp, fa) ) { //esiste connessione da fa a fp?
+					this.graph.addEdge(fp, fa) ; //aggiungo arco
 				}
 			}
 		}
 		*/
 		
 		// CREAZIONE DEGLI ARCHI -- metodo 2 (da un vertice, trova tutti i connessi)
+		//Avrei meno query. Dati uscenti dalla stazione
+		//PIU' VELOCE DEL PRIMO, complessita' pari a n
 		/*
 		for(Fermata fp: this.fermate) {
-			List<Fermata> connesse = dao.fermateSuccessive(fp, fermateIdMap) ;
+			List<Fermata> connesse = dao.fermateSuccessive(fp, fermateIdMap); //fermate adiacenti alla fp
 			
 			for(Fermata fa: connesse) {
 				this.graph.addEdge(fp, fa) ;

@@ -1,6 +1,7 @@
 package it.polito.tdp.metroparis.model;
 
 public class CoppiaFermate {
+	 //CREATA PER IL METODO 3)
 	private Fermata fp ;
 	private Fermata fa ;
 	/**
